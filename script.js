@@ -1,71 +1,89 @@
-/* 
-    Students! You will all be completing this matching card game.
-    Follow the directions throughout this file to slowly build out 
-    the game's features.
-*/
-
-
 // These are all the symbols that the game is going to use
 const symbols = ['🍎', '🍌', '🍇', '🍓', '🍍', '🍉', '🍒', '🥝'];
-// You're going to need this to display the cards on the screen (remember there should be two of each card)
-let cards = [];
-// These will be used when the user starts choosing cards
+let cards = [
+    {symbol: '🍎'},
+    {symbol: '🍎'},
+    {symbol: '🍌'},
+    {symbol: '🍌'},
+    {symbol: '🍇'},
+    {symbol: '🍇'},
+    {symbol: '🍓'},
+    {symbol: '🍓'},
+    {symbol: '🍍'},
+    {symbol: '🍍'},
+    {symbol: '🍉'},
+    {symbol: '🍉'},
+    {symbol: '🍒'},
+    {symbol: '🍒'},
+    {symbol: '🥝'},
+    {symbol: '🥝'},
+];
+
 let firstCard = null, secondCard = null;
-// You will need to lock the board to stop users from choosing cards when they choose two wrong cards
-// (Don't have to worry about this too much)
 let lockBoard = false;
 
-/* 
-    You must initialize the game board. You have been given a shuffleArray() function.
-    This function should also reset the entire game board by making sure there's no HTML inside of the game-board div.
-    Use the createCard() function to initialize each cardElement and add it to the gameBoard.
+const cardContainer = document.getElementById('game-board');
 
-*/
 function initGame() {
-    // Write your code here
+    // Resetting game board & shuffling
+    cardContainer.innerHTML= '';
+    resetBoard();
+    shuffleArray(cards);
+
+    // For loop to display all (randomized) cards
+    for (let card of cards){
+        createCard(card.symbol);
+    }
 
     document.getElementById('restart-btn').addEventListener('click', initGame);
 }
 
-/*
-    The card will have the class 'card' and it would be a good idea to somehow save what its symbol is
-    within the element itself, since we'll need it for later and there's no easy way to get it from the arrays.
-    Also make sure to add the event listener with the 'flipCard' function
-*/
 function createCard(symbol) {
-    // Write your code here
+    // Creating element
+    let card = document.createElement('div');
+    card.classList.add('card');
+    card.dataset.symbol = symbol;
+    cardContainer.appendChild(card)
+
+    // Adding event listener
+    card.addEventListener('click', ()=> {
+        flipCard(card);
+    })
 }
 
-/*
-    This function will handle all the logic for flipping the card. You can check if a variable doesn't
-    have a value attached to it or is null by doing if (variable === null) {} or if (variable == null) {} or  if (!variable){}
-    If a card get's flipped, add the 'flipped' class and also display the symbol. 
-    Also, if this is the first card you picked, then set the firstCard variable to the card you just picked.
-    If it's the second, then set the secondCard variable to it. Also, if that's the second card, then you 
-    want to check for a match using the checkForMatch() function. 
-*/
 function flipCard(card) {
     // If the board is supposed to be locked or you picked the same card you already picked
     if (lockBoard || card === firstCard) return;
-    // Write your code here
+    // Adding flipped class (show symbol)
+    card.classList.add('flipped');
+    card.innerText = card.dataset.symbol;
+
+    // Checking if first or second card
+    if (!firstCard){
+        firstCard = card;
+    } else {
+        secondCard = card;
+        checkForMatch();
+    }
 }
 
-/* 
-    If there's a match between the first two cards that you picked, you want to take those cards out of the
-    game and then reset the board so that there is firstCard == null and secondCard == null.
-    Otherwise, you should unflip the card and continue playing normally.
-*/
 function checkForMatch() {
-    // Write your code here
+    // Checking for match
+    if (firstCard.dataset.symbol === secondCard.dataset.symbol){
+        disableCards();
+    } else {
+        unflipCards();
+    }
+
 }
 
-/* 
-    Disable both of the cards by adding the "matched" class to them. The "matched" class will add CSS
-    properties to make sure that they can no longer be clicked at all. Then use the resetBoard() function
-    to reset the firstCard, secondCard, and lockBoard variables. (That's been written for you already)
-*/
 function disableCards() {
-    // Write your code here
+    // Adding matched class
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+
+    // Resetting board
+    resetBoard()
 }
  
 /* ---------------------  Everything under has already been done for you -------------------------- */
